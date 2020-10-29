@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>snake</title>
+    <script type="text/javascript">
+            var connected = false;
+            var actionDict = {38:"up",40:"down",37:"left",39:"right"};
+            window.ws = undefined;
+            function WebSocketTest()
+            {
+                if ("WebSocket" in window)
+                {
+                    alert("support websocket");
+                    // 打开一个 web socket
+                    name = document.getElementById("name").value;
+                    window.ws = new WebSocket("ws://127.0.0.1:8080/ws/socket?name="+name);
+
+                    window.ws.onopen = function()
+                    {
+                        // Web Socket 已连接上，使用 send() 方法发送数据
+                        alert("connected...");
+                        connected = true;
+
+                    };
+ 
+                    window.ws.onmessage = function (evt)
+                    {
+                        var received_data = JSON.parse(evt.data);
+                        console.log(received_data["data"]);
+                    };
+
+                    window.ws.onclose = function()
+                    {
+                        alert("closed...");
+                    };
+                }
+
+                else
+                {
+                    // 浏览器不支持 WebSocket
+                    alert("您的浏览器不支持 WebSocket!");
+                }
+            }
+            function sendMessage(msg){
+                let data = msg;
+                console.log(data);
+                window.ws.send(data);
+                document.getElementById("input").value = '';
+            }
+            function exit(){
+                window.ws.close();
+                window.ws = undefined;
+            }
+            function showKeyCode(event)
+			{
+				
+                if (connected == false) {
+                    return;
+                }	else {
+                    console.log(actionDict[event.keyCode]);	
+                    let action = actionDict[event.keyCode];
+                    sendMessage(action);
+                }
+                		
+            } 
+
+            // window.setInterval(function () {
+            //     if(window.ws != undefined) {
+            //         window.ws.send("ping");
+            //     }
+            // }, 5000);
+
+
+
+
+    </script>
+</head>
+<body  onkeyup="showKeyCode(event)">
+<div id="sse">
+    <form action="javascript:WebSocketTest()">
+        <input type="text" id="name">
+            <input type="submit" value="运行 WebSocket" />
+    </form>
+    <!-- <form action="javascript:sendMessage()">
+    <input type="text" id="input">
+        <input type="submit" value="Submit" />
+    </form> -->
+    <input type="button" onclick="exit()" value="Exit">
+</div>
+<div id="snake">
+
+</div>
+</body>
+</html>
