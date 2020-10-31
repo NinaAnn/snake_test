@@ -53,7 +53,11 @@ func (P *Pannel) Enter(name string) *Snake {
 
 func (P *Pannel) Exit(id int64) {
 	snake := P.snakeMap[id]
-
+	delete(P.snakeMap, id)
+	snake.DoneChan <- 1
+	<-snake.DoneChan
+	snake = nil
+	P.totalCount--
 }
 
 func (P *Pannel) Run() {
@@ -83,7 +87,8 @@ func (P *Pannel) Update() {
 		_, err := snake.Move()
 		if err != nil {
 			fmt.Println(err)
-			return
+			snake.ExitChan <- err.Error()
+			P.Exit(snake.Id)
 		}
 		for _, v := range snake.pos {
 			pan[v[0]][v[1]] = 1
@@ -93,12 +98,12 @@ func (P *Pannel) Update() {
 		x := snake.X
 		y := snake.Y
 		if pan[x][y] == 1 {
-			return
+			snake.ExitChan <- "sorry you are out of the game"
 		}
 		pan[x][y] = 2
 
 	}
-	fmt.Println(pan)
+	// fmt.Println(pan)
 	P.pan = P.pan[0:0][0:0]
 	for i := 0; i < P.height; i++ {
 		P.pan = append(P.pan, pan[i])

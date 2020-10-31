@@ -1,4 +1,4 @@
-module snake_ini
+module snake_test
 
 go 1.13
 

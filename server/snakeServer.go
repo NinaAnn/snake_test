@@ -1,9 +1,11 @@
 package server
 
 import (
+	"snake_test/component"
+
 	"github.com/gin-gonic/gin"
-	"snake_ini/component"
 )
+
 var room = component.NewRoom()
 
 func NewServer() *gin.Engine {

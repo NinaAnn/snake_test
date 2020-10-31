@@ -44,11 +44,10 @@
             }
             function sendMessage(msg){
                 let data = msg;
-                console.log(data);
                 window.ws.send(data);
-                document.getElementById("input").value = '';
             }
             function exit(){
+                sendMessage("exit");
                 window.ws.close();
                 window.ws = undefined;
             }

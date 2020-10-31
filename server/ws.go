@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"snake_test/component"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -58,6 +60,17 @@ func (s *ws) Handle() gin.HandlerFunc {
 		u := room.Enter(name)
 		retMsg := make(map[string]interface{})
 
+		go func() {
+			for {
+				_, msg, err := conn.ReadMessage()
+				if err != nil {
+					room.Exit(u.Id)
+					return
+				}
+				s.handleOrder(string(msg), u)
+			}
+		}()
+
 		for {
 			select {
 			case data := <-u.PosChan:
@@ -69,8 +82,28 @@ func (s *ws) Handle() gin.HandlerFunc {
 					fmt.Println("send msg faild ", err)
 					return
 				}
+			case errMsg := <-u.ExitChan:
+				retMsg["code"] = "1"
+				retMsg["msg"] = errMsg
+				err := conn.WriteJSON(retMsg)
+				if err != nil {
+					fmt.Println("send msg faild ", err)
+					return
+				}
 			}
 		}
 		return
+	}
+}
+
+func (s *ws) handleOrder(msg string, snake *component.Snake) {
+	dirMap := map[string]int{
+		"up":    0,
+		"down":  1,
+		"right": 2,
+		"left":  3,
+	}
+	if dir, ok := dirMap[msg]; ok {
+		snake.MoveChan <- dir
 	}
 }

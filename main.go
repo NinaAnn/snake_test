@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"math/rand"
-	"snake_ini/server"
+	"snake_test/server"
 	"time"
 )
 
