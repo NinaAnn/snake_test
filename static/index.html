@@ -2,20 +2,32 @@
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>snake</title>
-    <script src="js/util/d3.v4.js"></script>
+    <title>ChinaVis 2019 Challenge I</title>
     <link rel="stylesheet" href="css/util/bootstrap.min.css">
     <link rel="stylesheet" href="css/util/font-awesome.css">
     <script src="js/util/jquery-1.10.2.min.js"></script>
     <script src="js/util/jquery-3.3.1.min.js"></script>
-    <script src="js/pannel.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/util/d3.v4.js"></script>
+    <script src="js/util/d3.tip.js"></script>
+    <script src="js/util/queue.v1.min.js"></script>
+    <script src="js/util/d3-simple-slider.min.js"></script>
+    <script src="js/util/d3-scale-chromatic.v0.3.min.js"></script>
     <script src="js/util/bootstrap.min.js"></script>
+    <script src="js/pannel.js"></script>
     <script type="text/javascript">
             var connected = false;
-            var actionDict = {38:"up",40:"down",37:"left",39:"right"};
             window.ws = undefined;
-            pannel.initialize("snake");
-            function WebSocketTest()
+            var actionDict = {38:"up",40:"down",37:"left",39:"right"};
+
+    $(document).ready(function () {
+        let height = window.innerHeight;
+        
+        $('#overview').height(height - 4);
+        console.log($('#overview').height());
+        pannel.initialize("snake");  
+    });
+    function WebSocketTest()
             {
                 if ("WebSocket" in window)
                 {
@@ -35,7 +47,14 @@
                     window.ws.onmessage = function (evt)
                     {
                         var received_data = JSON.parse(evt.data);
-                        console.log(received_data["data"]);
+                        if (received_data['code'] == 0){
+                            pannel.updatePannel(received_data["data"]);
+                        }
+                        else {
+                            alert(received_data["msg"]);
+                            pannel.reinitPannel();
+                        }
+                        // console.log(received_data["data"]);
                     };
 
                     window.ws.onclose = function()
@@ -71,25 +90,30 @@
                 }
                 		
             } 
-
     </script>
+
 </head>
-<body  onkeyup="showKeyCode(event)">
-<div id="overview">
-    <div id="up" class="block">
-        <div id="sse" class="full">
-            <form action="javascript:WebSocketTest()">
-                <input type="text" id="name">
-                    <input type="submit" value="运行 WebSocket" />
-            </form>
-            <input type="button" onclick="exit()" value="Exit">
+<body onkeyup="showKeyCode(event)">
+    <div id="overview">
+        <div id="name">
+            <div id="top" class="block">
+                <div id="main" class="full">
+                    <form action="javascript:WebSocketTest()">
+                        <input type="text" id="name">
+                            <input type="submit" value="运行 WebSocket" />
+                            <input type="button" onclick="exit()" value="Exit">
+                    </form>
+                    
+                </div>
+            </div>
         </div>
-    </div>
-    
-    <div id="down" class="block">
-        <div id="snake" class="full">
+        <div id="draw">
+            <div id="down" class="block">
+                <div id="snake" class="full">
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+     </div>
+     
 </body>
 </html>

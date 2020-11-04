@@ -71,7 +71,7 @@ func (P *Pannel) Run() {
 			pan[v.X][v.Y] = 3
 			v.PosChan <- pan
 		}
-		time.Sleep(time.Duration(2) * time.Second)
+		time.Sleep(time.Duration(1) * time.Second)
 	}
 }
 
