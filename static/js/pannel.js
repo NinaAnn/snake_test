@@ -12,7 +12,6 @@ let pannel = {
         self._divID = divID;
         self._width = $('#' + divID ).width()/3 - self._margin.left;
         self._height = $('#' + divID ).height() - self._margin.top;
-        console.log($('#' + divID ).width());
         self.left = parseInt($('#' + divID ).width()/3)+ self._margin.left;
 
         let svg = d3.select('#' + divID )
@@ -50,12 +49,11 @@ let pannel = {
     },
     updatePannel: function(data) {
         //console.log(data);
-        let fillMap = {0:'none',1:'gray',3:'red'}
+        let fillMap = {0:'none',1:'gray',3:'black',10:'brown'}
         for (i=0;i<self.size;i++)
         { 
             for (j=0; j<self.size;j++) {
                 let d = data[i][j];
-                console.log(d);
                 d3.select('#rect'+i+'_'+j).attr('fill',fillMap[d]);
             }
         }

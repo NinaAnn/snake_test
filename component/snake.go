@@ -8,10 +8,10 @@ import (
 )
 
 var DirMap = map[int][2]int{
-	0: [2]int{0, 1},
-	1: [2]int{0, -1},
-	2: [2]int{1, 0},
-	3: [2]int{-1, 0},
+	0: [2]int{0, 1},  //right
+	1: [2]int{0, -1}, //left
+	2: [2]int{1, 0},  //down
+	3: [2]int{-1, 0}, //up
 }
 
 var ConditionMap = map[int]map[int]int{
@@ -24,20 +24,20 @@ var ConditionMap = map[int]map[int]int{
 	1: map[int]int{
 		0: 1,
 		1: 1,
-		2: 3,
-		3: 2,
+		2: 2,
+		3: 3,
 	},
 	2: map[int]int{
-		0: 2,
-		1: 2,
-		2: 1,
-		3: 0,
+		0: 0,
+		1: 1,
+		2: 2,
+		3: 2,
 	},
 	3: map[int]int{
-		0: 3,
-		1: 3,
-		2: 0,
-		3: 1,
+		0: 0,
+		1: 1,
+		2: 3,
+		3: 3,
 	},
 }
 
@@ -59,6 +59,7 @@ func NewSnake(w int, h int, name string, x int, y int, n int64) *Snake {
 	}
 	d := rand.Intn(3)
 	s.dir = d
+	fmt.Println(d)
 	s.Add()
 	go s.Serve()
 	return s
@@ -86,7 +87,6 @@ func (s *Snake) Serve() {
 		// 执行操作
 		case id := <-s.MoveChan:
 			s.dir = ConditionMap[s.dir][id]
-			fmt.Println(s.dir)
 		case <-s.DoneChan:
 			fmt.Println("exiting...")
 			s.DoneChan <- 1
@@ -99,6 +99,7 @@ func (s *Snake) Serve() {
 func (s *Snake) Move() (n int, err error) {
 	insert := [2]int{s.X, s.Y}
 	dir := DirMap[s.dir]
+	fmt.Println(dir)
 	s.X += dir[0]
 	s.Y += dir[1]
 	if s.X >= s.w || s.X < 0 || s.Y < 0 || s.Y >= s.h {

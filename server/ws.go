@@ -74,7 +74,6 @@ func (s *ws) Handle() gin.HandlerFunc {
 		for {
 			select {
 			case data := <-u.PosChan:
-				retMsg["name"] = name
 				retMsg["code"] = "0"
 				retMsg["data"] = data
 				err := conn.WriteJSON(retMsg)
@@ -98,10 +97,10 @@ func (s *ws) Handle() gin.HandlerFunc {
 
 func (s *ws) handleOrder(msg string, snake *component.Snake) {
 	dirMap := map[string]int{
-		"up":    0,
-		"down":  1,
-		"right": 2,
-		"left":  3,
+		"up":    3,
+		"down":  2,
+		"right": 0,
+		"left":  1,
 	}
 	if dir, ok := dirMap[msg]; ok {
 		snake.MoveChan <- dir
